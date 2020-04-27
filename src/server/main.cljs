@@ -2,7 +2,8 @@
   ; Import NPM modules directly 
   ; https://shadow-cljs.github.io/docs/UsersGuide.html#npm
   (:require ["crypto" :as crypto])
-  (:require ["http" :as http]))
+  (:require ["http" :as http])
+  (:require ["rhea" :as rhea]))
 
 ; This is standard ClojureScript code and the output should be run using Node.
 ;
