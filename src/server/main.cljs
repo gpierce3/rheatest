@@ -8,7 +8,20 @@
 ;
 ; More details at https://shadow-cljs.github.io/docs/UsersGuide.html#target-node-script
 
+(defn send-message []
+      (js/console.log "sending a message to queue"))
+
+(defn retrieve-message []
+      (js/console.log "retrieving a message to queue"))
+
 (defn request-handler [req res]
+      (let [url (.-url req)]
+           (js/console.log url)
+           (case url
+                 "/send" (send-message)
+                 "/retrieve" (retrieve-message)
+                 (js/console.log "bad url")))
+
       (.end res "foo"))
 
 ; a place to hang onto the server so we can stop/start it
