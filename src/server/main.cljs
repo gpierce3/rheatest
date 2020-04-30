@@ -19,7 +19,8 @@
         ;(toastr/success "rhea on worked!")
         (.on conn (clj->js "connection_open") (fn [context] (js/console.log "event fired: connection_open")))
         (.on conn (clj->js "connection_close") (fn [context] (js/console.log "event fired: connection_close")))
-        (.on conn (clj->js "connection_error") (fn [context] (js/console.log "event fired: connection_error")))
+        (.on conn (clj->js "connection_error") (fn [context] (js/console.log "event fired: connection_error")
+                                                   (js/console.log context)))
         (.on conn (clj->js "protocol_error") (fn [context] (js/console.log "event fired: protocol_error")
                                                  (js/console.log context)))
         (.on conn (clj->js "error") (fn [context] (js/console.log "event fired: error")))
@@ -58,7 +59,39 @@
           false)))
 
 (defn retrieve-message []
-      (js/console.log "retrieving a message to queue"))
+      (js/console.log "server.main retrieve-message entry")
+      (try
+        ;(rhea/on (clj->js "sendable") (fn [context] (toastr/success "sendable")))
+        ;(toastr/success "rhea on worked!")
+        (.on conn (clj->js "connection_open") (fn [context] (js/console.log "event fired: connection_open")))
+        (.on conn (clj->js "connection_close") (fn [context] (js/console.log "event fired: connection_close")))
+        (.on conn (clj->js "connection_error") (fn [context] (js/console.log "event fired: connection_error")))
+        (.on conn (clj->js "protocol_error") (fn [context] (js/console.log "event fired: protocol_error")
+                                                 (js/console.log context)))
+        (.on conn (clj->js "error") (fn [context] (js/console.log "event fired: error")))
+        (.on conn (clj->js "disconnected") (fn [context] (js/console.log "event fired: disconnected")))
+        (.on conn (clj->js "settled") (fn [context] (js/console.log "event fired: settled")))
+        (js/console.log "event handlers registered for connection")
+
+        (.set_reconnect conn false)
+
+        (.connect conn)
+
+        (let [recv (.open_receiver conn (clj->js "some.queue"))]
+             (.on recv (clj->js "message")
+                  (fn [context]
+                      (js/console.log "event fired: message")
+                      (js/console.log (js->clj context))))
+
+             (js/console.log "receiver created and handlers registered"))
+
+        (js/console.log "server.main retrieve-message exit")
+        true
+
+        (catch js/Error e
+          (js/console.log "server.main retrieve-message ERROR")
+          (js/console.log e)
+          false)))
 
 (defn request-handler [req res]
       (let [url (.-url req)]
